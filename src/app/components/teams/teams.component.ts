@@ -10,7 +10,7 @@ export class TeamsComponent implements OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   counter = 0;
   subscription?: Subscription;
-  f1Pilots: Observable<Array<string>> = this.getF1Pilots().pipe(
+  f1Pilots$: Observable<Array<string>> = this.getF1Pilots$().pipe(
     takeUntil(this.destroy$),
     filter((pilots) => pilots.length >= 3),
   );
@@ -20,10 +20,12 @@ export class TeamsComponent implements OnDestroy {
       console.log(value);
     }, (error) => console.log(error),
       () => console.log('Subscription is completed'))
-    this.f1Pilots.subscribe((pilots) => {
+
+    this.f1Pilots$.subscribe((pilots) => {
       console.log(pilots);
       console.log(pilots.filter((pilot) => pilot === 'Fernando Alonso'))
     });
+    
   }
 
   timer$: Observable<number> = Observable.create((observer: Observer<number>) => {
@@ -46,7 +48,7 @@ export class TeamsComponent implements OnDestroy {
     this.destroy$.complete();
   }
 
-  getF1Pilots(): Observable<Array<string>> {
+  getF1Pilots$(): Observable<Array<string>> {
     return of(
       ['Fernando Alonso', 'Lewis Hamilton', 'Carlos Sainz']
     )
