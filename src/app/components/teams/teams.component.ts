@@ -1,12 +1,25 @@
-import { Component, OnDestroy } from '@angular/core';
-import { Observable, Observer, Subject, Subscription, filter, of, takeUntil } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Observable, Observer, Subject, Subscription, debounceTime, delay, filter, fromEvent, merge, of, take, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-teams',
   templateUrl: './teams.component.html',
   styleUrls: ['./teams.component.scss']
 })
-export class TeamsComponent implements OnDestroy {
+
+
+export class TeamsComponent implements OnDestroy, AfterViewInit, OnInit {
+
+  @ViewChild('searchInput', {
+    read: ElementRef,
+    static: false
+  }) searchInput?: ElementRef;
+
+  @ViewChild('clickButton', {
+    read: ElementRef,
+    static: false
+  }) clickButton?: ElementRef;
+
   destroy$: Subject<boolean> = new Subject();
   counter = 0;
   subscription?: Subscription;
@@ -14,6 +27,8 @@ export class TeamsComponent implements OnDestroy {
     takeUntil(this.destroy$),
     filter((pilots) => pilots.length >= 3),
   );
+
+  /* mergedF1Pilot$: Observable<Array<string>> = merge(this.getF1Pilots$().pipe(take(1)), this.getF1Pilots2$); */
 
   constructor() {
     this.subscription = this.timer$.subscribe((value) => {
@@ -28,12 +43,25 @@ export class TeamsComponent implements OnDestroy {
     
   }
 
+  ngOnInit(): void {
+    
+  }
+
+
+  ngAfterViewInit(): void {
+    fromEvent(this.searchInput?.nativeElement, 'keyup')
+    .pipe(delay(3000))
+    .subscribe((value) => console.log('keyUp value:' ,value));
+
+    fromEvent(this.clickButton?.nativeElement, 'click').subscribe((value) => console.log('click value:', value))
+  }
+
   timer$: Observable<number> = Observable.create((observer: Observer<number>) => {
     const asd = setInterval(() => {
       this.counter++;
       observer.next(this.counter);
 
-      if (this.counter === 10) {
+      if (this.counter === 1) {
 
         observer.complete();
       } else if (this.counter === 5) {
@@ -51,6 +79,12 @@ export class TeamsComponent implements OnDestroy {
   getF1Pilots$(): Observable<Array<string>> {
     return of(
       ['Fernando Alonso', 'Lewis Hamilton', 'Carlos Sainz']
+    )
+  }
+
+  getF1Pilots2$(): Observable<Array<string>> {
+    return of(
+      ['Nico Hulkenberg', 'Max Verstappen']
     )
   }
 }
