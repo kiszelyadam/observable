@@ -20,9 +20,12 @@ export class TeamsComponent implements OnDestroy, AfterViewInit, OnInit {
     static: false
   }) clickButton?: ElementRef;
 
+  // unsubscribe
   destroy$: Subject<boolean> = new Subject();
   counter = 0;
   subscription?: Subscription;
+
+  // filtering if array.length is bigger then 2
   f1Pilots$: Observable<Array<string>> = this.getF1Pilots$().pipe(
     takeUntil(this.destroy$),
     filter((pilots) => pilots.length >= 3),
@@ -47,7 +50,7 @@ export class TeamsComponent implements OnDestroy, AfterViewInit, OnInit {
     
   }
 
-
+  // key and click event observable
   ngAfterViewInit(): void {
     fromEvent(this.searchInput?.nativeElement, 'keyup')
     .pipe(delay(3000))
@@ -56,6 +59,7 @@ export class TeamsComponent implements OnDestroy, AfterViewInit, OnInit {
     fromEvent(this.clickButton?.nativeElement, 'click').subscribe((value) => console.log('click value:', value))
   }
 
+  // traditional observer and observable
   timer$: Observable<number> = Observable.create((observer: Observer<number>) => {
     const asd = setInterval(() => {
       this.counter++;
@@ -70,12 +74,14 @@ export class TeamsComponent implements OnDestroy, AfterViewInit, OnInit {
     }, 1000)
   });
 
+  // usubscribe observable
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     this.destroy$.next(true);
     this.destroy$.complete();
   }
 
+  // observable from
   getF1Pilots$(): Observable<Array<string>> {
     return of(
       ['Fernando Alonso', 'Lewis Hamilton', 'Carlos Sainz']

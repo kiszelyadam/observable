@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { interval, mapTo, merge } from 'rxjs';
 
 @Component({
-  selector: 'app-pilots',
-  templateUrl: './pilots.component.html',
-  styleUrls: ['./pilots.component.scss']
+  selector: 'app-merge',
+  templateUrl: './merge.component.html',
+  styleUrls: ['./merge.component.scss']
 })
-export class PilotsComponent implements OnInit {
+export class MergeComponent implements OnInit {
 
   route = 'teams'
 
